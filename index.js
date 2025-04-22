@@ -3,16 +3,19 @@ const express = require("express");
 const app = express();
 const port = 3000;
 app.use(express.json());
+// const fs = require("fs")
+// const path = require("path")
 
 const users = [];
 const admins = [];
 const userPosts = [];
 const posts = [];
 const comments = [];
-// const videos = [];
+const videos = [];
+const followers = [];
 
 app.get("/", (req, res) => {
-  res.send(`Error.`);
+  res.send(`Error, switch to http://localhost:${port}/users.`);
 });
 
 // USERS
@@ -61,13 +64,21 @@ app.get("/posts/comments", (req, res) => {
 });
 
 // VIDEOS
-// app.get("/videos", (req, res) => {
-//     if (videos.length === 0) {
-//       res.send("No videos found!");
-//     } else {
-//       res.json(videos);
-//     }
-//   });
+app.get("/videos", (req, res) => {
+    if (videos.length === 0) {
+      res.send("No videos found!");
+    } else {
+      res.json(videos);
+    }
+  });
+
+app.get("/users/followers", (req, res) => {
+  if (followers.length === 0) {
+    res.send("No followers found!");
+  } else {
+    res.json(followers);
+  }
+})
 
 app.post("/users", (req, res) => {
   const { email, password, name } = req.body;
@@ -241,39 +252,57 @@ app.delete("/posts/comments/:id", (req, res) => {
   return res.status(201).json({ message: "Comment successfully deleted" });
 });
 
-// app.post("/videos", (req, res) => {
-//     const { videoSrc, videoTopic, videoHashtags, videoLikes, videoComments, videoShares, videoViews } = req.body;
+app.post("/videos", (req, res) => {
+    const { videoSrc, videoTopic, videoHashtags, videoLikes, videoComments, videoShares, videoViews } = req.body;
 
-//     if (!videoSrc || !videoTopic || !videoHashtags || !videoLikes || !videoComments || !videoShares || !videoViews) {
-//         res.status(404).json({ error: "Video doesn't match requirements!" })
-//     }
+    if (!videoSrc || !videoTopic || !videoHashtags || !videoLikes || !videoComments || !videoShares || !videoViews) {
+        res.status(404).json({ error: "Video doesn't match requirements!" })
+    }
 
-//     const newVideo = {
-//         videoId: videos.length + 1,
-//         videoSrc,
-//         videoTopic,
-//         videoLikes,
-//         videoComments,
-//         videoShares,
-//         videoViews
-//     }
+    const newVideo = {
+        id: videos.length + 1,
+        videoSrc,
+        videoTopic,
+        videoLikes,
+        videoComments,
+        videoShares,
+        videoViews
+    }
 
-//     videos.push(newVideo)
-//     res.status(201).json({ newVideo })
-// })
+    videos.push(newVideo)
+    res.status(201).json({ newVideo })
+})
 
-// app.delete("/videos/:id", (req, res) => {
-//     const videoId = parseInt(req.params.id);
-//     const videoIndex = videos.findIndex(
-//       (video) => video.id === videoId
-//     );
-//     if (videoIndex === -1) {
-//       res.status(404).json({ error: "Requested Video not found!" });
-//     }
-  
-//     const deletedVideo = videos.splice(videoIndex, 1);
-//     return res.status(201).json({ message: "Video successfully deleted" });
-//   });
+app.delete("/videos/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = videos.findIndex((video) => video.id == id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Requested video not found!" });
+  }
+
+  const deletedVideo = videos.splice(index, 1);
+  res.status(200).json({ message: "Video successfully deleted!", deletedVideo });
+});
+
+
+app.post("/users/followers", (req, res) => {
+  const { followerUsername, followerFollowers, followerFollowsBack } = req.body;
+
+  if (!followerUsername || !followerFollowers || !followerFollowsBack) {
+    return res.status(404).json({ error: "Error" })
+  }
+
+  const newFollower = {
+    id: followers.length + 1,
+    followerUsername,
+    followerFollowers,
+    followerFollowsBack
+  }
+
+  followers.push(newFollower)
+  res.status(201).json({ message: "New Follower!" })
+})
 
 // STARTS THE APP
 app.listen(port, () => {
