@@ -277,5 +277,5 @@ app.delete("/posts/comments/:id", (req, res) => {
 
 // STARTS THE APP
 app.listen(port, () => {
-  console.log(`LoginAPI Started! Listening on port ${port}`);
+  console.log(`BlogAPI Started! Listening on port ${port}`);
 });
