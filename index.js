@@ -9,7 +9,7 @@ const admins = [];
 const userPosts = [];
 const posts = [];
 const comments = [];
-const videos = [];
+// const videos = [];
 
 app.get("/", (req, res) => {
   res.send(`Error, switch to http://localhost:${port}/users.`);
