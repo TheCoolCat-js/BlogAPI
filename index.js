@@ -12,7 +12,7 @@ const comments = [];
 // const videos = [];
 
 app.get("/", (req, res) => {
-  res.send(`Error, switch to http://localhost:${port}/users.`);
+  res.send(`Error.`);
 });
 
 // USERS
